@@ -1,7 +1,8 @@
 package eorm
 
-// 条件组装 用户API层
+import "fmt"
 
+// 条件组装 用户API层
 type Statement struct {
 	clause *Clause
 }
@@ -44,6 +45,7 @@ func (s *Statement) OrEqual(field string, value interface{}) *Statement {
 
 // Select
 func (s *Statement) Select(field ...string) *Statement {
+	fmt.Println(s.clause.params)
 	s.clause.selectField(field...)
 	return s
 }

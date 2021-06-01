@@ -101,13 +101,16 @@ func (c *Client) FindOne(ctx context.Context, statement *Statement, dest interfa
 
 	destType := reflect.TypeOf(dest).Elem()
 	schema := StructForType(destType)
+
 	// 获取指针指向的元素信息
 	destVal := reflect.New(destType).Elem()
+
 	// 结构体字段
 	var values []interface{}
 	for _, name := range schema.FieldNames {
 		values = append(values, destVal.FieldByName(name).Addr().Interface())
 	}
+
 	if err := rows.Scan(values...); err != nil {
 		log.Println(err)
 		return err
@@ -140,26 +143,30 @@ func (c *Client) FindAll(ctx context.Context, statement *Statement, dest interfa
 
 	schema := StructForType(destType)
 
-	// 获取指针指向的元素信息
-	destVal := reflect.New(destType).Elem()
+	for rows.Next() {
 
-	// 结构体字段
-	var values []interface{}
-	for _, name := range schema.FieldNames {
-		values = append(values, destVal.FieldByName(name).Addr().Interface())
+		// 获取指针指向的元素信息
+		destVal := reflect.New(destType).Elem()
+
+		// 结构体字段
+		var values []interface{}
+		for _, name := range schema.FieldNames {
+			values = append(values, destVal.FieldByName(name).Addr().Interface())
+		}
+
+		if err := rows.Scan(values...); err != nil {
+			log.Println(err)
+			return err
+		}
+
+		destSlice.Set(reflect.Append(destSlice, destVal))
 	}
 
-	if err := rows.Scan(values...); err != nil {
-		log.Println(err)
-		return err
-	}
-
-	destSlice.Set(destVal)
 	return nil
 
 }
 
-func (c *Client) Delete(ctx context.Context, statement *Statement, dest interface{}) (int64, error) {
+func (c *Client) Delete(ctx context.Context, statement *Statement) (int64, error) {
 	createDeleteSQL(statement)
 	log.Println(statement.clause.params)
 	res, err := c.session.Raw(statement.clause.sql, statement.clause.params...).Exec()
@@ -169,7 +176,7 @@ func (c *Client) Delete(ctx context.Context, statement *Statement, dest interfac
 	return res.RowsAffected()
 }
 
-func (c *Client) Update(ctx context.Context, statement *Statement, dest interface{}) (int64, error) {
+func (c *Client) Update(ctx context.Context, statement *Statement) (int64, error) {
 	createUpdateSQL(statement)
 	log.Println(statement.clause.params)
 

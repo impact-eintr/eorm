@@ -1,7 +1,6 @@
 package eorm
 
 import (
-	"fmt"
 	"go/ast"
 	"reflect"
 	"strings"
@@ -76,7 +75,6 @@ func dataTypeOf(types reflect.Type, schema *Schema) {
 
 		//切分标签
 		tagArr := strings.Split(field.Tag, ",")
-		fmt.Println(tagArr)
 		// 数据库中对应列表名称
 		if len(tagArr[0]) > 0 {
 			field.TableColumn = tagArr[0]

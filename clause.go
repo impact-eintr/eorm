@@ -107,20 +107,24 @@ func (this *Clause) updateStruct(vars interface{}) *Clause {
 func (this *Clause) SetCondition(name Type, sql string, vars []interface{}) {
 	this.sqlType[name] = sql
 	this.paramsType[name] = vars
+
 }
 
 // 查询字段
 func (this *Clause) selectField(cselect ...string) *Clause {
 	this.cselect = strings.Join(cselect, ",")
 	return this
+
 }
 
 func (this *Clause) andEqual(field string, value interface{}) *Clause {
 	return this.setCondition(Condition, "AND", field, "=", value)
+
 }
 
 func (this *Clause) orEqual(field string, value interface{}) *Clause {
 	return this.setCondition(Condition, "OR", field, "=", value)
+
 }
 
 //根据关键字构建sql语句
@@ -129,6 +133,7 @@ func (this *Clause) Set(operation Type, param ...interface{}) {
 	fmt.Println("拼接出的sql: ", sql)
 	this.sqlType[operation] = sql
 	this.paramsType[operation] = vars
+
 }
 
 //拼接各个sql语句
@@ -151,7 +156,7 @@ func (this *Clause) Build(orders ...Type) {
 // 查询条件组装
 func (this *Clause) setCondition(values ...interface{}) *Clause {
 	sql, vars := generators[values[0].(Type)](values[2:]...)
-	this.params = append(this.params, vars)
+	this.params = append(this.params, vars...)
 	this.addCondition(sql, values[1].(string))
 
 	return this

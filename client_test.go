@@ -21,26 +21,20 @@ func Newclient() (client *Client, err error) {
 }
 
 type User struct {
-	Id          int64  `eorm:"id"`
-	User_id     int64  `eorm:"user_id"`
-	Username    string `eorm:"username"`
-	Password    string `eorm:"password"`
-	Email       string `eorm:"email"`
-	Gender      int    `eorm:"gender"`
-	Create_time string `eorm:"create_time"`
-	Update_time string `eorm:"update_time"`
+	User_id  int64  `eorm:"user_id"`
+	Username string `eorm:"username"`
+	Password string `eorm:"password"`
+	//Email    string `eorm:"email"`
+	//Gender   int    `eorm:"gender"`
 }
 
 //func TestEorm_Insert(t *testing.T) {
 //	user := &User{
-//		Id:          99,
-//		User_id:     7345893745987349857,
-//		Username:    "HelloWorld",
-//		Password:    "xxx",
-//		Email:       "",
-//		Gender:      0,
-//		Create_time: "",
-//		Update_time: "",
+//		User_id:  7345893745987349850,
+//		Username: "songzhichao",
+//		Password: "xxx",
+//		Email:    "",
+//		Gender:   0,
 //	}
 //
 //	statement := NewStatement()
@@ -50,17 +44,80 @@ type User struct {
 //	client.Insert(context.Background(), statement)
 //}
 
-func TestSession_FindOne(t *testing.T) {
+//func TestSession_FindOne(t *testing.T) {
+//	statement := NewStatement()
+//	statement = statement.SetTableName("user").
+//		AndEqual("username", "yixingwei").
+//		Select("user_id,username,password")
+//
+//	client, err := Newclient()
+//	if err != nil {
+//		log.Println(err)
+//		return
+//	}
+//
+//	user := &User{}
+//	_ = client.FindOne(context.Background(), statement, user)
+//
+//	log.Println(user)
+//
+//}
+
+func TestSession_FindAll(t *testing.T) {
 	statement := NewStatement()
 	statement = statement.SetTableName("user").
-		AndEqual("username", "yixingwei").
-		Select("username,User_id")
+		//AndEqual("username", "yixingwei").
+		Select("user_id,username,password")
+
 	client, err := Newclient()
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	user := &User{}
-	_ = client.FindOne(context.Background(), statement, user)
+
+	var user []User
+	_ = client.FindAll(context.Background(), statement, &user)
 	log.Println(user)
 }
+
+func TestSession_Delete(t *testing.T) {
+	statement := NewStatement()
+	statement = statement.SetTableName("memo").
+		AndEqual("name", "迈莫coding")
+	client, _ := Newclient()
+	client.Delete(context.Background(), statement)
+}
+
+//
+//func TestSession_Update(t *testing.T) {
+//	user := &Users{
+//		Name: "迈莫",
+//		Age:  1,
+//	}
+//	statement := NewStatement()
+//	statement = statement.SetTableName("user").
+//		UpdateStruct(user).
+//		AndEqual("user_name", "迈莫")
+//	client, _ := Newclient()
+//	client.Update(context.Background(), statement)
+//}
+//
+//func TestClient_Transaction(t *testing.T) {
+//	user := &Users{
+//		Name: "迈莫",
+//		Age:  1,
+//	}
+//	client, _ := Newclient()
+//	statement := NewStatement()
+//	statement = statement.SetTableName("user").
+//		AndEqual("age", 21).Select("user_name,age")
+//	res, err := client.Transaction(func(ctx context.Context, client2 *Client) (interface{}, error) {
+//		err := client2.FindOne(ctx, statement, user)
+//		return user, err
+//	})
+//	if err != nil {
+//		log.Error(err)
+//		return
+//	}
+//	log.Info(res)
+//}
