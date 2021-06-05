@@ -122,17 +122,37 @@ func (this *Clause) andEqual(field string, value interface{}) *Clause {
 
 }
 
+func (this *Clause) andGreaterThan(field string, value interface{}) *Clause {
+	return this.setCondition(Condition, "AND", field, ">", value)
+
+}
+
+func (this *Clause) andLessThan(field string, value interface{}) *Clause {
+	return this.setCondition(Condition, "AND", field, "<", value)
+
+}
+
 func (this *Clause) orEqual(field string, value interface{}) *Clause {
 	return this.setCondition(Condition, "OR", field, "=", value)
+
+}
+
+func (this *Clause) orGreaterThan(field string, value interface{}) *Clause {
+	return this.setCondition(Condition, "OR", field, ">", value)
+
+}
+
+func (this *Clause) orLessThan(field string, value interface{}) *Clause {
+	return this.setCondition(Condition, "OR", field, "<", value)
 
 }
 
 //根据关键字构建sql语句
 func (this *Clause) Set(operation Type, param ...interface{}) {
 	sql, vars := generators[operation](param...)
-	fmt.Println("拼接出的sql: ", sql)
 	this.sqlType[operation] = sql
 	this.paramsType[operation] = vars
+	fmt.Println("拼接出的sql: ", sql)
 
 }
 

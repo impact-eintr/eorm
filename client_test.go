@@ -21,11 +21,10 @@ func Newclient() (client *Client, err error) {
 }
 
 type User struct {
+	Id       int64  `eorm:"id"`
 	User_id  int64  `eorm:"user_id"`
 	Username string `eorm:"username"`
 	Password string `eorm:"password"`
-	//Email    string `eorm:"email"`
-	//Gender   int    `eorm:"gender"`
 }
 
 //func TestEorm_Insert(t *testing.T) {
@@ -33,8 +32,6 @@ type User struct {
 //		User_id:  7345893745987349850,
 //		Username: "songzhichao",
 //		Password: "xxx",
-//		Email:    "",
-//		Gender:   0,
 //	}
 //
 //	statement := NewStatement()
@@ -63,11 +60,35 @@ type User struct {
 //
 //}
 
+//func TestSession_Delete(t *testing.T) {
+//	statement := NewStatement()
+//	statement = statement.SetTableName("user").
+//		AndEqual("username", "yixingwei")
+//	client, _ := Newclient()
+//	client.Delete(context.Background(), statement)
+//}
+
+//func TestSession_Update(t *testing.T) {
+//	user := &User{
+//		User_id:  7345893745987349850,
+//		Username: "songzhichao",
+//		Password: "szcdmm",
+//	}
+//
+//	statement := NewStatement()
+//	statement = statement.SetTableName("user").
+//		AndEqual("username", "songzhichao").
+//		UpdateStruct(user)
+//
+//	client, _ := Newclient()
+//	client.Update(context.Background(), statement)
+//}
+
 func TestSession_FindAll(t *testing.T) {
 	statement := NewStatement()
 	statement = statement.SetTableName("user").
-		//AndEqual("username", "yixingwei").
-		Select("user_id,username,password")
+		AndLessThan("id", "6").
+		Select("id,user_id,username,password")
 
 	client, err := Newclient()
 	if err != nil {
@@ -80,28 +101,6 @@ func TestSession_FindAll(t *testing.T) {
 	log.Println(user)
 }
 
-func TestSession_Delete(t *testing.T) {
-	statement := NewStatement()
-	statement = statement.SetTableName("memo").
-		AndEqual("name", "迈莫coding")
-	client, _ := Newclient()
-	client.Delete(context.Background(), statement)
-}
-
-//
-//func TestSession_Update(t *testing.T) {
-//	user := &Users{
-//		Name: "迈莫",
-//		Age:  1,
-//	}
-//	statement := NewStatement()
-//	statement = statement.SetTableName("user").
-//		UpdateStruct(user).
-//		AndEqual("user_name", "迈莫")
-//	client, _ := Newclient()
-//	client.Update(context.Background(), statement)
-//}
-//
 //func TestClient_Transaction(t *testing.T) {
 //	user := &Users{
 //		Name: "迈莫",
