@@ -85,38 +85,28 @@ type User struct {
 //}
 
 func TestSession_FindAll(t *testing.T) {
-	statement := NewStatement()
-	statement = statement.SetTableName("user").
-		AndLessThan("id", "6").
-		Select("id,user_id,username,password")
-
 	client, err := Newclient()
 	if err != nil {
 		log.Println(err)
 		return
 	}
 
-	var user []User
-	_ = client.FindAll(context.Background(), statement, &user)
-	log.Println(user)
-}
+	statement1 := NewStatement()
+	statement1 = statement1.SetTableName("user").
+		Select("id,user_id,username,password").
+		AndLessThan("id", "6")
 
-//func TestClient_Transaction(t *testing.T) {
-//	user := &Users{
-//		Name: "迈莫",
-//		Age:  1,
-//	}
-//	client, _ := Newclient()
-//	statement := NewStatement()
-//	statement = statement.SetTableName("user").
-//		AndEqual("age", 21).Select("user_name,age")
-//	res, err := client.Transaction(func(ctx context.Context, client2 *Client) (interface{}, error) {
-//		err := client2.FindOne(ctx, statement, user)
-//		return user, err
-//	})
-//	if err != nil {
-//		log.Error(err)
-//		return
-//	}
-//	log.Info(res)
-//}
+	var users1 []User
+	_ = client.FindAll(context.Background(), statement1, &users1)
+	log.Println(users1)
+
+	statement2 := NewStatement()
+	statement2 = statement2.SetTableName("user").
+		Select("id,user_id,username,password").
+		AndGreaterThan("id", "6").
+		AndLessThan("id", "10")
+
+	var users2 []User
+	_ = client.FindAll(context.Background(), statement2, &users2)
+	log.Println(users2)
+}
