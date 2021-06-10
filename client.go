@@ -41,6 +41,7 @@ func (s *Settings) DataSourceName() string {
 	return ustr
 }
 
+// 实例化一个客户端(新建一个数据库链接)
 func NewClient(setting Settings) (c *Client, err error) {
 	db, err := sql.Open(setting.DriverName, setting.DataSourceName())
 	if err != nil {
@@ -48,6 +49,20 @@ func NewClient(setting Settings) (c *Client, err error) {
 		return
 	}
 
+	if err = db.Ping(); err != nil {
+		log.Println(err)
+		return
+	}
+
+	c = &Client{db: db}
+	c.session = NewSession(db)
+	log.Println("成功连接到数据库")
+
+	return
+
+}
+
+func NewClientWithDBconn(db *sql.DB) (c *Client, err error) {
 	if err = db.Ping(); err != nil {
 		log.Println(err)
 		return

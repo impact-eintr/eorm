@@ -2,13 +2,16 @@ package eorm
 
 import (
 	"context"
+	"database/sql"
 	"log"
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
-func Newclient() (client *Client, err error) {
+var DB *sql.DB
+
+func init() {
 	setting := Settings{
 		DriverName: "mysql",
 		User:       "root",
@@ -17,7 +20,19 @@ func Newclient() (client *Client, err error) {
 		Host:       "127.0.0.1:3306",
 		Options:    map[string]string{"charset": "utf8mb4"},
 	}
-	return NewClient(setting)
+
+	var err error
+	DB, err = sql.Open(setting.DriverName, setting.DataSourceName())
+	if err != nil {
+		log.Fatalln(err)
+	}
+	_ = DB
+
+}
+
+func Newclient() (client *Client, err error) {
+	return NewClientWithDBconn(DB)
+
 }
 
 type User struct {
@@ -27,19 +42,19 @@ type User struct {
 	Password string `eorm:"password"`
 }
 
-//func TestEorm_Insert(t *testing.T) {
-//	user := &User{
-//		User_id:  7345893745987349850,
-//		Username: "songzhichao",
-//		Password: "xxx",
-//	}
-//
-//	statement := NewStatement()
-//	statement = statement.SetTableName("user").InsertStruct(user)
-//
-//	client, _ := Newclient()
-//	client.Insert(context.Background(), statement)
-//}
+func TestEorm_Insert(t *testing.T) {
+	user := &User{
+		User_id:  7345893745987349850,
+		Username: "eintr",
+		Password: "ashkjdfhal23848yfdf",
+	}
+
+	statement := NewStatement()
+	statement = statement.SetTableName("user").InsertStruct(user)
+
+	client, _ := Newclient()
+	client.Insert(context.Background(), statement)
+}
 
 //func TestSession_FindOne(t *testing.T) {
 //	statement := NewStatement()

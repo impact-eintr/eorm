@@ -132,6 +132,10 @@ func (this *Clause) andLessThan(field string, value interface{}) *Clause {
 
 }
 
+func (this *Clause) andLike(field string, value interface{}) *Clause {
+	return this.setCondition(Condition, "AND", field, "LIKE", value)
+
+}
 func (this *Clause) orEqual(field string, value interface{}) *Clause {
 	return this.setCondition(Condition, "OR", field, "=", value)
 
@@ -144,6 +148,11 @@ func (this *Clause) orGreaterThan(field string, value interface{}) *Clause {
 
 func (this *Clause) orLessThan(field string, value interface{}) *Clause {
 	return this.setCondition(Condition, "OR", field, "<", value)
+
+}
+
+func (this *Clause) orLike(field string, value interface{}) *Clause {
+	return this.setCondition(Condition, "OR", field, "LIKE", value)
 
 }
 

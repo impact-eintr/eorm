@@ -45,6 +45,11 @@ func (s *Statement) AndLessThan(field string, value interface{}) *Statement {
 	return s
 }
 
+func (s *Statement) AndLike(field string, value interface{}) *Statement {
+	s.clause.andLike(field, value)
+	return s
+}
+
 func (s *Statement) OrEqual(field string, value interface{}) *Statement {
 	s.clause.orEqual(field, value)
 	return s
@@ -57,6 +62,11 @@ func (s *Statement) OrGreaterThan(field string, value interface{}) *Statement {
 
 func (s *Statement) OrLessThan(field string, value interface{}) *Statement {
 	s.clause.orLessThan(field, value)
+	return s
+}
+
+func (s *Statement) OrLike(field string, value interface{}) *Statement {
+	s.clause.orLike(field, value)
 	return s
 }
 
