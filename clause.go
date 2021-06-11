@@ -45,11 +45,13 @@ func newClause() *Clause {
 		sqlType:    make(map[Type]string),
 		paramsType: make(map[Type][]interface{}),
 	}
+
 }
 
 func (this *Clause) SetTableName(tablename string) *Clause {
 	this.tablename = tablename
 	return this
+
 }
 
 //INSERT INTO user(name, age) VALUES("eintr", 23);
@@ -67,7 +69,7 @@ func (this *Clause) insertStruct(vars interface{}) *Clause {
 
 	//构建SQL语句
 	//INSERT INTO user(name, age)
-	this.Set(Insert, this.tablename, schema.FieldNames) //["Name","Age"]
+	this.Set(Insert, this.tablename, schema.FieldTags) //["name","age"]
 
 	recordValues := make([]interface{}, 0)
 	recordValues = append(recordValues, schema.RecordValues(vars))
@@ -95,7 +97,6 @@ func (this *Clause) updateStruct(vars interface{}) *Clause {
 	schema := StructForType(types)
 	m := make(map[string]interface{})
 	m = schema.UpdateParam(vars)
-	fmt.Println(m)
 
 	// 构建SQL语句
 	this.Set(Update, this.tablename, m)
@@ -178,6 +179,7 @@ func (this *Clause) Build(orders ...Type) {
 	}
 
 	this.sql = strings.Join(sqls, " ")
+	fmt.Println(this.sql)
 	this.params = vars
 
 }

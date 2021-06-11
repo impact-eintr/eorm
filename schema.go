@@ -18,6 +18,7 @@ type Field struct {
 type Schema struct {
 	Fields     []*Field          //字段属性组合
 	FieldNames []string          //字段名称
+	FieldTags  []string          //tag名称
 	FieldMap   map[string]*Field // key:value
 }
 
@@ -89,6 +90,7 @@ func dataTypeOf(types reflect.Type, schema *Schema) {
 		schema.Fields = append(schema.Fields, field)
 		schema.FieldMap[p.Name] = field
 		schema.FieldNames = append(schema.FieldNames, p.Name)
+		schema.FieldTags = append(schema.FieldTags, field.TableColumn)
 	}
 }
 

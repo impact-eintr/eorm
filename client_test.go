@@ -44,8 +44,8 @@ type User struct {
 
 func TestEorm_Insert(t *testing.T) {
 	user := &User{
-		User_id:  7345893745987349850,
-		Username: "eintr",
+		User_id:  7345893745987349851,
+		Username: "szc",
 		Password: "ashkjdfhal23848yfdf",
 	}
 
