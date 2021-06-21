@@ -162,7 +162,6 @@ func (this *Clause) Set(operation Type, param ...interface{}) {
 	sql, vars := generators[operation](param...)
 	this.sqlType[operation] = sql
 	this.paramsType[operation] = vars
-	fmt.Println("拼接出的sql: ", sql)
 
 }
 
@@ -179,7 +178,6 @@ func (this *Clause) Build(orders ...Type) {
 	}
 
 	this.sql = strings.Join(sqls, " ")
-	fmt.Println(this.sql)
 	this.params = vars
 
 }
