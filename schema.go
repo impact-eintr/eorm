@@ -2,6 +2,7 @@ package eorm
 
 import (
 	"go/ast"
+	"log"
 	"reflect"
 	"strings"
 	"sync"
@@ -108,8 +109,10 @@ func (this *Schema) UpdateParam(dest interface{}) map[string]interface{} {
 	m := make(map[string]interface{})
 
 	for _, field := range this.Fields {
-		m[field.TableColumn] = destValue.FieldByName(field.Name).Interface()
+		m["`"+field.TableColumn+"`"] = destValue.FieldByName(field.Name).Interface()
 	}
+
+	log.Println(m)
 
 	return m
 

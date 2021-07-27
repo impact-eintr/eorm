@@ -42,19 +42,19 @@ type User struct {
 	Password string `eorm:"password"`
 }
 
-func TestEorm_Insert(t *testing.T) {
-	user := &User{
-		User_id:  7345893745987349851,
-		Username: "szc",
-		Password: "ashkjdfhal23848yfdf",
-	}
-
-	statement := NewStatement()
-	statement = statement.SetTableName("user").InsertStruct(user)
-
-	client, _ := Newclient()
-	client.Insert(context.Background(), statement)
-}
+//func TestEorm_Insert(t *testing.T) {
+//	user := &User{
+//		User_id:  7345893745987349851,
+//		Username: "szc",
+//		Password: "ashkjdfhal23848yfdf",
+//	}
+//
+//	statement := NewStatement()
+//	statement = statement.SetTableName("user").InsertStruct(user)
+//
+//	client, _ := Newclient()
+//	client.Insert(context.Background(), statement)
+//}
 
 //func TestSession_FindOne(t *testing.T) {
 //	statement := NewStatement()
@@ -83,45 +83,46 @@ func TestEorm_Insert(t *testing.T) {
 //	client.Delete(context.Background(), statement)
 //}
 
-//func TestSession_Update(t *testing.T) {
-//	user := &User{
-//		User_id:  7345893745987349850,
-//		Username: "songzhichao",
-//		Password: "szcdmm",
-//	}
-//
-//	statement := NewStatement()
-//	statement = statement.SetTableName("user").
-//		AndEqual("username", "songzhichao").
-//		UpdateStruct(user)
-//
-//	client, _ := Newclient()
-//	client.Update(context.Background(), statement)
-//}
-
-func TestSession_FindAll(t *testing.T) {
-	client, err := Newclient()
-	if err != nil {
-		log.Println(err)
-		return
+func TestSession_Update(t *testing.T) {
+	user := &User{
+		User_id:  7345893745987349851,
+		Username: "songzhichao",
+		Password: "szcdMM",
 	}
 
-	statement1 := NewStatement()
-	statement1 = statement1.SetTableName("user").
-		Select("id,user_id,username,password").
-		AndLessThan("id", "6")
+	statement := NewStatement()
+	statement = statement.SetTableName("user").
+		AndEqual("username", "szc").
+		UpdateStruct(user)
 
-	var users1 []User
-	_ = client.FindAll(context.Background(), statement1, &users1)
-	log.Println(users1)
-
-	statement2 := NewStatement()
-	statement2 = statement2.SetTableName("user").
-		Select("id,user_id,username,password").
-		AndGreaterThan("id", "6").
-		AndLessThan("id", "10")
-
-	var users2 []User
-	_ = client.FindAll(context.Background(), statement2, &users2)
-	log.Println(users2)
+	client, _ := Newclient()
+	_, err := client.Update(context.Background(), statement)
+	log.Println(err)
 }
+
+//func TestSession_FindAll(t *testing.T) {
+//	client, err := Newclient()
+//	if err != nil {
+//		log.Println(err)
+//		return
+//	}
+//
+//	statement1 := NewStatement()
+//	statement1 = statement1.SetTableName("user").
+//		Select("id,user_id,username,password").
+//		AndLessThan("id", "6")
+//
+//	var users1 []User
+//	_ = client.FindAll(context.Background(), statement1, &users1)
+//	log.Println(users1)
+//
+//	statement2 := NewStatement()
+//	statement2 = statement2.SetTableName("user").
+//		Select("id,user_id,username,password").
+//		AndGreaterThan("id", "6").
+//		AndLessThan("id", "10")
+//
+//	var users2 []User
+//	_ = client.FindAll(context.Background(), statement2, &users2)
+//	log.Println(users2)
+//}
