@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"strings"
+	"sync"
 )
 
 type Type int
@@ -35,6 +36,8 @@ type Clause struct {
 
 	sqlType    map[Type]string
 	paramsType map[Type][]interface{}
+
+	once sync.Once
 }
 
 func newClause() *Clause {

@@ -5,7 +5,6 @@ import (
 	"log"
 	"reflect"
 	"strings"
-	"sync"
 )
 
 type Field struct {
@@ -23,35 +22,12 @@ type Schema struct {
 	FieldMap   map[string]*Field // key:value
 }
 
-var (
-	structMutex sync.RWMutex
-	structCache = make(map[reflect.Type]*Schema)
-)
-
 func StructForType(t reflect.Type) *Schema {
-	//从缓存中获取 先看可读数据
-	structMutex.RLock()
-	st, found := structCache[t]
-	structMutex.RUnlock()
-
-	if found {
-		return st
-	}
-
-	//可读数据中没有，尝试抢占锁，再次尝试获取
-	structMutex.Lock()
-	defer structMutex.Unlock()
-	st, found = structCache[t]
-	if found {
-		return st
-	}
-	//缓存中没有 创建数据并缓存
-	st = &Schema{
+	st := &Schema{
 		FieldMap: make(map[string]*Field),
 	}
 	dataTypeOf(t, st)
 
-	structCache[t] = st
 	return st
 }
 
