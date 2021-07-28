@@ -42,19 +42,19 @@ type User struct {
 	Password string `eorm:"password"`
 }
 
-//func TestEorm_Insert(t *testing.T) {
-//	user := &User{
-//		User_id:  7345893745987349851,
-//		Username: "szc",
-//		Password: "ashkjdfhal23848yfdf",
-//	}
-//
-//	statement := NewStatement()
-//	statement = statement.SetTableName("user").InsertStruct(user)
-//
-//	client, _ := Newclient()
-//	client.Insert(context.Background(), statement)
-//}
+func TestEorm_Insert(t *testing.T) {
+	user := &User{
+		User_id:  7345893745987349856,
+		Username: "gaoweiqi",
+		Password: "ashkjdfhal23848yfdf",
+	}
+
+	statement := NewStatement()
+	statement = statement.SetTableName("user").InsertStruct(user)
+
+	client, _ := Newclient()
+	client.Insert(context.Background(), statement)
+}
 
 //func TestSession_FindOne(t *testing.T) {
 //	statement := NewStatement()
