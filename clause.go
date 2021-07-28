@@ -69,9 +69,6 @@ func (this *Clause) insertStruct(vars interface{}) *Clause {
 
 	//构建SQL语句
 	//INSERT INTO user(name, age)
-	for i, v := range schema.FieldTags {
-		schema.FieldTags[i] = "`" + v + "`"
-	}
 	this.Set(Insert, this.tablename, schema.FieldTags) //["name","age"]
 
 	recordValues := make([]interface{}, 0)

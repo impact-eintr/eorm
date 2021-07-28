@@ -2,8 +2,12 @@ package eorm
 
 import (
 	"fmt"
+	"log"
 	"strings"
+	"sync"
 )
+
+var once sync.Once
 
 type generator func(values ...interface{}) (string, []interface{})
 
@@ -26,7 +30,14 @@ func _insert(values ...interface{}) (string, []interface{}) {
 	//截获表名
 	tableName := values[0]
 	//类型断言,注意values中传过来的是一个string和一个[]string
+	once.Do(func() {
+		for i, v := range values[1].([]string) {
+			values[1].([]string)[i] = "`" + v + "`"
+		}
+	})
+
 	fields := strings.Join(values[1].([]string), ",")
+	log.Println(values...)
 
 	return fmt.Sprintf("INSERT INTO %s (%v)", tableName, fields), []interface{}{}
 }

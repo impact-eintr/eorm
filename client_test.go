@@ -43,16 +43,25 @@ type User struct {
 }
 
 func TestEorm_Insert(t *testing.T) {
-	user := &User{
-		User_id:  7345893745987349856,
-		Username: "gaoweiqi",
+	user1 := &User{
+		User_id:  7345893745987349857,
+		Username: "gaoweiqi1",
 		Password: "ashkjdfhal23848yfdf",
 	}
-
+	user2 := &User{
+		User_id:  7345893745987349858,
+		Username: "gaoweiqi2",
+		Password: "ashkjdfhal23848yfdf",
+	}
 	statement := NewStatement()
-	statement = statement.SetTableName("user").InsertStruct(user)
+	statement = statement.SetTableName("user").InsertStruct(user1)
 
 	client, _ := Newclient()
+	client.Insert(context.Background(), statement)
+
+	statement = NewStatement()
+	statement = statement.SetTableName("user").InsertStruct(user2)
+	client, _ = Newclient()
 	client.Insert(context.Background(), statement)
 }
 
