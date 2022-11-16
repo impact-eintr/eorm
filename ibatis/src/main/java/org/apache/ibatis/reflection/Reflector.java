@@ -8,6 +8,7 @@ import java.lang.reflect.*;
 import java.util.*;
 import java.util.Map.Entry;
 
+
 public class Reflector {
   // 要被反射解析的类
   private final Class<?> type;
