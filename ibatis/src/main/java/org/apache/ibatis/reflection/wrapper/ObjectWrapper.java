@@ -1,5 +1,6 @@
 package org.apache.ibatis.reflection.wrapper;
 
+import org.apache.ibatis.reflection.MetaObject;
 import org.apache.ibatis.reflection.factory.ObjectFactory;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
@@ -17,9 +18,9 @@ public interface ObjectWrapper {
 	// 获得setter列表
 	String[] getSetterNames();
 	// 获得getter的类型
-	String[] getGetterType(String name);
+	Class<?> getGetterType(String name);
 	// 获得getter的类型
-	String[] getSetterType(String name);
+	Class<?> getSetterType(String name);
 	// 查看指定属性是否有setter
 	boolean hasSetter(String name);
 	// 查看指定属性是否有getter

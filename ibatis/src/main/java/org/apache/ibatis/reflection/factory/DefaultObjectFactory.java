@@ -1,5 +1,8 @@
 package org.apache.ibatis.reflection.factory;
 
+import org.apache.ibatis.reflection.ReflectionException;
+import org.apache.ibatis.reflection.Reflector;
+
 import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.util.*;
@@ -12,12 +15,13 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
 		return create(type, null, null);
 	}
 
+	// class A 的有参构造函数需要2个参数 分别是 int 123 和 String "this is A"
+	// 那么后面对应的参数就是 List<Class<?>>{Integer, String} List<Object>{123, "this is A"}
 	public <T> T create(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs){
 		Class<?> classToCreate = resolveInterface(type);
 		// 创建类型实例
 		return (T) instantiateClass(classToCreate, constructorArgTypes, constructorArgs);
 	}
-
 
 	private  <T> T instantiateClass(Class<T> type, List<Class<?>> constructorArgTypes, List<Object> constructorArgs) {
 		try {
@@ -37,7 +41,7 @@ public class DefaultObjectFactory implements ObjectFactory, Serializable {
 				}
 			}
 
-			// 根据如惨类型查找对应的构造器
+			// 根据入参类型查找对应的构造器
 			constructor = type.getDeclaredConstructor(constructorArgTypes.toArray(new Class[constructorArgTypes.size()]));
 			try {
 				// 采用有参构造函数创建实例

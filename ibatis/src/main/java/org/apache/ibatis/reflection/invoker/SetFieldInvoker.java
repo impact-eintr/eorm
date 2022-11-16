@@ -1,5 +1,7 @@
 package org.apache.ibatis.reflection.invoker;
 
+import org.apache.ibatis.reflection.Reflector;
+
 import java.lang.reflect.Field;
 
 public class SetFieldInvoker implements Invoker{

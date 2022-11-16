@@ -1,5 +1,7 @@
 package org.apache.ibatis.reflection.wrapper;
 
+import org.apache.ibatis.reflection.MetaObject;
+import org.apache.ibatis.reflection.ReflectionException;
 import org.apache.ibatis.reflection.property.PropertyTokenizer;
 
 import java.util.List;
@@ -20,6 +22,7 @@ public abstract class BaseWrapper implements ObjectWrapper{
 		if ("".equals(prop.getName())) {
 			return object;
 		} else {
+			// 这里会循环调用,解析下层
 			return metaObject.getValue(prop.getName());
 		}
 	}
