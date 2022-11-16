@@ -100,7 +100,7 @@ public class MetaObject {
 		PropertyTokenizer prop = new PropertyTokenizer(name);
 		// 如果还有下层属性
 		if (prop.hasNext()) {
-			MetaObject metaValue = metaObjectForProperty(prop.getIndexName());
+			MetaObject metaValue = metaObjectForProperty(prop.getIndexedName());
 			if (metaValue == SystemMetaObject.NULL_META_OBJECT) {
 				return null;
 			} else {
@@ -116,12 +116,12 @@ public class MetaObject {
 		PropertyTokenizer prop = new PropertyTokenizer(name);
 		// 如果还有下层属性
 		if (prop.hasNext()) {
-			MetaObject metaValue = metaObjectForProperty(prop.getIndexName());
+			MetaObject metaValue = metaObjectForProperty(prop.getIndexedName());
 			if (metaValue == SystemMetaObject.NULL_META_OBJECT) {
 				if (value == null) {
 					return;
 				} else {
-					metaValue = objectWrapper.instantiateProPertyValue(name, prop, objectFactory);
+					metaValue = objectWrapper.instantiatePropertyValue(name, prop, objectFactory);
 				}
 			}
 			metaValue.setValue(prop.getChildren(), value);

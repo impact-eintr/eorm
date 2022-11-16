@@ -26,8 +26,8 @@ public interface ObjectWrapper {
 	// 查看指定属性是否有getter
 	boolean hasGetter(String name);
 	// 生成一个属性的实例
-	MetaObject instantiateProPertyValue(String name, PropertyTokenizer prop,
-																			ObjectFactory objectFactory);
+	MetaObject instantiatePropertyValue(String name, PropertyTokenizer prop, ObjectFactory objectFactory);
+
 	// 判断是否是集合
 	boolean isCollection();
 	// 添加元素

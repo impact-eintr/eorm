@@ -1,7 +1,9 @@
 package org.apache.ibatis.reflection;
 
+import org.apache.ibatis.reflection.invoker.GetFieldInvoker;
 import org.apache.ibatis.reflection.invoker.Invoker;
 import org.apache.ibatis.reflection.invoker.MethodInvoker;
+import org.apache.ibatis.reflection.invoker.SetFieldInvoker;
 import org.apache.ibatis.reflection.property.PropertyNamer;
 
 import java.lang.reflect.*;
@@ -222,8 +224,38 @@ public class Reflector {
 
   // TODO 下午继续写
   private void addFields(Class<?> clazz) {
-
+    Field[] fields = clazz.getDeclaredFields(); // 仅限public
+    for (Field field : fields) {
+      if (!setMethods.containsKey(field.getName())) {
+        int modifiers = field.getModifiers();
+        if (!(Modifier.isFinal(modifiers) && Modifier.isStatic(modifiers))) {
+          addSetField(field);
+        }
+      }
+      if (!getMethods.containsKey(field.getName())) {
+        addGetField(field);
+      }
+    }
+    if (clazz.getSuperclass() != null) {
+      addFields(clazz.getSuperclass());
+    }
   }
+  private void addGetField(Field field) {
+    if (isValidPropertyName(field.getName())) {
+      getMethods.put(field.getName(), new GetFieldInvoker(field));
+      Type fieldType = TypeParameterResolver.resolveFieldType(field, type);
+      getTypes.put(field.getName(), typeToClass(fieldType));
+    }
+  }
+
+  private void addSetField(Field field) {
+    if (isValidPropertyName(field.getName())) {
+      setMethods.put(field.getName(), new SetFieldInvoker(field));
+      Type fieldType = TypeParameterResolver.resolveFieldType(field, type);
+      setTypes.put(field.getName(), typeToClass(fieldType));
+    }
+  }
+
 
   private boolean isValidPropertyName(String name) {
     return !(name.startsWith("$") || "serialVersionUID".equals(name) || "class".equals(name));
@@ -274,4 +306,83 @@ public class Reflector {
     return sb.toString();
   }
 
+  public static boolean canControlMemberAccessible() {
+    try {
+      SecurityManager securityManager = System.getSecurityManager();
+      if (null != securityManager) {
+        securityManager.checkPermission(new ReflectPermission("suppressAccessChecks"));
+      }
+    } catch (SecurityException e) {
+      return false;
+    }
+    return true;
+  }
+
+  public Class<?> getType() {
+    return type;
+  }
+
+  public Constructor<?> getDefaultConstructor() {
+    if (defaultConstructor != null) {
+      return defaultConstructor;
+    } else {
+      throw new ReflectionException("There is no default constructor for " + type);
+    }
+  }
+
+  public boolean hasDefaultConstructor() {
+    return defaultConstructor != null;
+  }
+
+  public Invoker getSetInvoker(String propertyName) {
+    Invoker method = setMethods.get(propertyName);
+    if (method == null) {
+      throw new ReflectionException("There is no setter for property named '" + propertyName + "' in '" + type + "'");
+    }
+    return method;
+  }
+
+  public Invoker getGetInvoker(String propertyName) {
+    Invoker method = getMethods.get(propertyName);
+    if (method == null) {
+      throw new ReflectionException("There is no getter for property named '" + propertyName + "' in '" + type + "'");
+    }
+    return method;
+  }
+
+  public Class<?> getSetterType(String propertyName) {
+    Class<?> clazz = setTypes.get(propertyName);
+    if (clazz == null) {
+      throw new ReflectionException("There is no setter for property named '" + propertyName + "' in '" + type + "'");
+    }
+    return clazz;
+  }
+
+  public Class<?> getGetterType(String propertyName) {
+    Class<?> clazz = getTypes.get(propertyName);
+    if (clazz == null) {
+      throw new ReflectionException("There is no getter for property named '" + propertyName + "' in '" + type + "'");
+    }
+    return clazz;
+  }
+
+  public String[] getGetablePropertyNames() {
+    return readablePropertyNames;
+  }
+
+  public String[] getSetablePropertyNames() {
+    return writablePropertyNames;
+  }
+
+  public boolean hasGetter(String propertyName) {
+    return getMethods.keySet().contains(propertyName);
+  }
+
+  public boolean hasSetter(String propertyName) {
+    return setMethods.keySet().contains(propertyName);
+  }
+
+  public String findPropertyName(String name) {
+    return caseInsensitivePropertyMap.get(name.toUpperCase(Locale.ENGLISH));
+  }
 }

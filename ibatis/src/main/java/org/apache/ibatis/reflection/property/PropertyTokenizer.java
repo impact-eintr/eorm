@@ -37,7 +37,7 @@ public class PropertyTokenizer implements Iterator<PropertyTokenizer>{
 		return index;
 	}
 
-	public String getIndexName() {
+	public String getIndexedName() {
 		return indexName;
 	}
 

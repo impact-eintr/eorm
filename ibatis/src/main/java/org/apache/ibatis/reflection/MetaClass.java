@@ -171,7 +171,7 @@ public class MetaClass {
 	}
 
 	public boolean hasDefaultConstructor() {
-		return reflector.hasDefalutConstructor();
+		return reflector.hasDefaultConstructor();
 	}
 
 }
