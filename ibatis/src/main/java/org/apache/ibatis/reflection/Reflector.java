@@ -222,9 +222,8 @@ public class Reflector {
             + paramType2.getName() + "'.");
   }
 
-  // TODO 下午继续写
   private void addFields(Class<?> clazz) {
-    Field[] fields = clazz.getDeclaredFields(); // 仅限public
+    Field[] fields = clazz.getDeclaredFields(); // private protectd public
     for (Field field : fields) {
       if (!setMethods.containsKey(field.getName())) {
         int modifiers = field.getModifiers();
