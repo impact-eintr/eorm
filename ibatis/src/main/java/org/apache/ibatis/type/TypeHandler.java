@@ -21,8 +21,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
- * @author Clinton Begin
+ * @author impact-eintr
  */
+// 模板模式 指定一种行为的固定抽象操作 具体实现
 public interface TypeHandler<T> {
 
   void setParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException;

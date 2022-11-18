@@ -109,15 +109,19 @@ public abstract class BaseTypeHandler<T> extends TypeReference<T> implements Typ
     }
   }
 
+  // 向PreparedStatement对象中的指定变量位置写入一个不为null的值
   public abstract void setNonNullParameter(PreparedStatement ps, int i, T parameter, JdbcType jdbcType) throws SQLException;
 
   /**
    * @param columnName Colunm name, when configuration <code>useColumnLabel</code> is <code>false</code>
    */
+  // 从ResultSet中按照字段名读出一个可能为null的数据
   public abstract T getNullableResult(ResultSet rs, String columnName) throws SQLException;
 
+  // 从ResultSet中按照字段编号读出一个可能为null的数据
   public abstract T getNullableResult(ResultSet rs, int columnIndex) throws SQLException;
 
+  // 从CallableStatement中按照字段编号读出一个可能为null的数据
   public abstract T getNullableResult(CallableStatement cs, int columnIndex) throws SQLException;
 
 }

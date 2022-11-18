@@ -48,11 +48,11 @@ import org.apache.ibatis.io.ResolverUtil;
 import org.apache.ibatis.io.Resources;
 
 /**
- * @author Clinton Begin
- * @author Kazuki Shimizu
+ * @author impact-eintr
  */
 public final class TypeHandlerRegistry {
 
+  // 关于类型的映射信息都保存在以下的几个Map中
   // JDBC类型与对应类型处理器的映射
   private final Map<JdbcType, TypeHandler<?>>  jdbcTypeHandlerMap = new EnumMap<>(JdbcType.class);
   // Java类型与Map<JdbcType, TypeHandler<?>>的映射
@@ -226,28 +226,24 @@ public final class TypeHandlerRegistry {
    */
   @SuppressWarnings("unchecked")
   private <T> TypeHandler<T> getTypeHandler(Type type, JdbcType jdbcType) {
-    if (ParamMap.class.equals(type)) { // 是ParamMap，因此不是单一的Java类型
+    if (ParamMap.class.equals(type)) { // 是ParamMap 因此不是单一的java类型
       return null;
     }
-
     // 先根据Java类型找到对应的jdbcHandlerMap
     Map<JdbcType, TypeHandler<?>> jdbcHandlerMap = getJdbcHandlerMap(type);
-    TypeHandler<?> handler = null;
-    if (jdbcHandlerMap != null) { // 存在jdbcHandlerMap
-      // 根据JDBC类型找寻对应的处理器
-      handler = jdbcHandlerMap.get(jdbcType);
+    if (jdbcHandlerMap != null) {
+      TypeHandler handler = jdbcHandlerMap.get(type);
       if (handler == null) {
-        // 使用null作为键进行一次找寻，通过本类源码可知当前jdbcHandlerMap可能是EnumMap也可能是HashMap
-        // EnumMap不允许键为null，因此总是返回null。HashMap允许键为null。这是这并不是一次无用功
+        // jdbcHandlerMap 可能是一个HashMap HashMap允许null作为key
         handler = jdbcHandlerMap.get(null);
       }
       if (handler == null) {
-        // 如果jdbcHandlerMap只有一个类型处理器，就取出他
+        // 如果jdbcHandlerMap中只有一个类型处理器 就取出它
         handler = pickSoleHandler(jdbcHandlerMap);
       }
+      return handler;
     }
-    // 返回找到的类型处理器
-    return (TypeHandler<T>) handler;
+    return null;
   }
 
   private Map<JdbcType, TypeHandler<?>> getJdbcHandlerMap(Type type) {

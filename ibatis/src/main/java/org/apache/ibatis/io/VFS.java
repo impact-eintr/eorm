@@ -49,6 +49,9 @@ public abstract class VFS {
     /**
      * 给出一个VFS实现。单例模式
      * @return VFS实现
+     * 外部类初次加载，会初始化静态变量、静态代码块、静态方法，但不会加载内部类和静态内部类。
+     * 实例化外部类，调用外部类的静态方法、静态变量，则外部类必须先进行加载，但只加载一次。
+     * 直接调用静态内部类时，外部类不会加载。
      */
     static VFS createVFS() {
       // 所有VFS实现类的列表。
@@ -56,6 +59,7 @@ public abstract class VFS {
       // 列表中先加入用户自定义的实现类。因此，用户自定义的实现类优先级高
       impls.addAll(USER_IMPLEMENTATIONS);
       impls.addAll(Arrays.asList((Class<? extends VFS>[]) IMPLEMENTATIONS));
+      System.out.println("构造VFS "+impls.size());
 
       VFS vfs = null;
       // 依次生成实例，找出第一个可用的
@@ -63,7 +67,7 @@ public abstract class VFS {
         Class<? extends VFS> impl = impls.get(i);
         try {
           // 生成一个实现类的对象
-          vfs = impl.newInstance();
+          vfs = impl.getDeclaredConstructor().newInstance();
           // 判断对象是否生成成功并可用
           if (vfs == null || !vfs.isValid()) {
             if (log.isDebugEnabled()) {
@@ -74,6 +78,10 @@ public abstract class VFS {
         } catch (InstantiationException | IllegalAccessException e) {
           log.error("Failed to instantiate " + impl, e);
           return null;
+        } catch (InvocationTargetException e) {
+          throw new RuntimeException(e);
+        } catch (NoSuchMethodException e) {
+          throw new RuntimeException(e);
         }
       }
 

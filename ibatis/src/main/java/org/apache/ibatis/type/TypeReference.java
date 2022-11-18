@@ -28,6 +28,7 @@ import java.lang.reflect.Type;
 
 /**
  * 用来处理泛型
+ * TypeReference<T> T 是原类型 是所有TypeHAndler的父类 所有TypeHandler在构造时都会解析传入的T
  * @param <T>
  */
 public abstract class TypeReference<T> {
@@ -36,7 +37,7 @@ public abstract class TypeReference<T> {
   private final Type rawType;
 
   protected TypeReference() {
-    rawType = getSuperclassTypeParameter(getClass());
+    rawType = getSuperclassTypeParameter(getClass()); // this.getClass()
   }
 
   /**
@@ -46,24 +47,20 @@ public abstract class TypeReference<T> {
    */
   Type getSuperclassTypeParameter(Class<?> clazz) {
     // 获取clazz类的带有泛型的直接父类
-    Type genericSuperclass = clazz.getGenericSuperclass();
-    if (genericSuperclass instanceof Class) {
-      // 进入这里说明genericSuperclass是class的实例
-      if (TypeReference.class != genericSuperclass) { // genericSuperclass不是TypeReference类本身
-        // 说明没有解析到足够上层，将clazz类的父类作为入参递归调用
+    Type genericSuperClass = clazz.getGenericSuperclass();
+    if (genericSuperClass instanceof Class) {
+      if (TypeReference.class != genericSuperClass) { // <<T>> 泛型的嵌套 解嵌套
         return getSuperclassTypeParameter(clazz.getSuperclass());
       }
-      // 说明clazz实现了TypeReference类，但是却没有使用泛型
-      throw new TypeException("'" + getClass() + "' extends TypeReference but misses the type parameter. "
-        + "Remove the extension or add a type parameter to it.");
+      throw new TypeException("'"+getClass()+"' extends TypeReference bu miss the type parameter. Remove the extension or add a type paramter to it");
     }
-
-    // 运行到这里说明genericSuperclass是泛型类。获取泛型的第一个参数，即T
-    Type rawType = ((ParameterizedType) genericSuperclass).getActualTypeArguments()[0];
-    if (rawType instanceof ParameterizedType) { // 如果时参数化类型
-      // 获取参数化类型的实际类型
-      rawType = ((ParameterizedType) rawType).getRawType();
+    // 说明genericSuperclass是泛型类 获取泛型的第一个参数 T
+    Type rawType = ((ParameterizedType)genericSuperClass).getActualTypeArguments()[0];
+    if (rawType instanceof ParameterizedType) {
+      // 获取参数化类型的实际参数
+      rawType = ((ParameterizedType)rawType).getRawType();
     }
+    System.out.println("T: "+rawType.getTypeName());
     return rawType;
   }
 
